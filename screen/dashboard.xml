@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This software is in the public domain under CC0 1.0 Universal plus a 
+Grant of Patent License.
+
+To the extent possible under law, the author(s) have dedicated all
+copyright and related and neighboring rights to this software to the
+public domain worldwide. This software is distributed without any
+warranty.
+
+You should have received a copy of the CC0 Public Domain Dedication
+along with this software (see the LICENSE.md file). If not, see
+<http://creativecommons.org/publicdomain/zero/1.0/>.
+-->
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.1.xsd"
+        default-menu-title="Dashboard" default-menu-index="1" menu-image="fa fa-dashboard" menu-image-type="icon">
+
+    <transition name="search"><default-response url="../Search"/></transition>
+    <transition name="quickLookup"><default-response url="../QuickLookup"/></transition>
+
+    <widgets>
+
+        <container-row><row-col md="6" style="text-center">
+            <form-single name="SearchOptions" transition="search" extends="component://SimpleScreens/screen/SimpleScreens/Search.xml#SearchOptions">
+                <field name="queryString"><default-field tooltip=""><text-line size="25"/></default-field></field>
+                <field-layout><field-row-big justify="center"><field-ref name="documentType"/><field-ref name="queryString"/>
+                    <field-ref name="submitButton"/></field-row-big></field-layout>
+            </form-single>
+        </row-col><row-col md="6" style="text-center">
+            <form-single name="QuickLookupForm" transition="quickLookup" focus-field=""
+                    extends="component://SimpleScreens/screen/SimpleScreens/QuickLookup.xml#QuickLookupForm">
+                <field-layout><field-row-big justify="center"><field-ref name="lookupId"/><field-ref name="submitButton"/></field-row-big></field-layout>
+            </form-single>
+        </row-col></container-row>
+
+        <section name="QuickInfoSection"><actions>
+            <entity-find entity-name="mantle.party.PartyRole" list="orgPartyRoles">
+                <econdition field-name="roleTypeId" value="OrgInternal"/></entity-find>
+            <set field="orgIntPartyIds" from="orgPartyRoles*.partyId"/>
+
+            <entity-find-count entity-name="mantle.order.OrderPart" count-field="orderPlacedCount">
+                <econdition field-name="statusId" operator="in" from="['OrderPlaced', 'OrderProcessing']"/>
+                <econdition field-name="vendorPartyId" operator="in" from="orgIntPartyIds"/>
+            </entity-find-count>
+            <entity-find-count entity-name="mantle.order.OrderPart" count-field="orderApprovedCount">
+                <econdition field-name="statusId" operator="in" from="['OrderApproved', 'OrderSent']"/>
+                <econdition field-name="vendorPartyId" operator="in" from="orgIntPartyIds"/>
+            </entity-find-count>
+            <entity-find-count entity-name="mantle.order.OrderPart" count-field="orderHeldCount">
+                <econdition field-name="statusId" value="OrderHold"/>
+                <econdition field-name="vendorPartyId" operator="in" from="orgIntPartyIds"/>
+            </entity-find-count>
+
+            <entity-find-count entity-name="mantle.request.RequestAndParty" count-field="requestSubmittedCount">
+                <econdition field-name="statusId" value="ReqSubmitted"/>
+                <econdition field-name="roleTypeId" value="Customer"/>
+            </entity-find-count>
+            <entity-find-count entity-name="mantle.request.RequestAndParty" count-field="requestInProgressCount">
+                <econdition field-name="statusId" operator="in" from="['ReqReviewed', 'ReqInProgress']"/>
+                <econdition field-name="roleTypeId" value="Customer"/>
+            </entity-find-count>
+        </actions><widgets>
+            <container-row><row-col sm="0" md="1"><label text="&amp;nbsp;" encode="false"/></row-col><row-col sm="5" md="4" style="text-center">
+                <label text="Sales Orders" type="h4"/>
+                <container style="row">
+
+                    <!--<container style="col q-my-auto"><link url="../Order" parameter-map="[orderType:'Sales', statusId:'OrderPlaced,OrderProcessing', statusId_op:'in']"
+                            text="Placed" badge="${orderPlacedCount}" btn-type="default"/></container>
+                    <container style="col q-my-auto"><link url="../Order" parameter-map="[orderType:'Sales', statusId:'OrderApproved,OrderSent', statusId_op:'in']"
+                            text="Approved" badge="${orderApprovedCount}" btn-type="default"/></container>
+                    <container style="col q-my-auto"><link url="../Order" parameter-map="[orderType:'Sales', statusId:'OrderHold']"
+                            text="Held" badge="${orderHeldCount}" btn-type="default"/></container>-->
+                    <render-mode><text type="qvt"><![CDATA[
+                        <q-btn class="col" no-caps outline text-color="primary" label="Placed">
+                            <q-badge color="primary" floating>${orderPlacedCount}</q-badge>
+                        </q-btn>
+                        <q-btn  class="col" no-caps outline text-color="primary" label="Approved">
+                            <q-badge color="primary" floating>${orderApprovedCount}</q-badge>
+                        </q-btn>
+                        <q-btn  class="col" no-caps outline text-color="primary" label="Approved">
+                            <q-badge color="primary" floating>${orderHeldCount}</q-badge>
+                        </q-btn>
+                    ]]></text></render-mode>
+                </container>
+            </row-col><row-col sm="2"><label text="&amp;nbsp;" encode="false"/></row-col><row-col sm="5" md="4" style="text-center">
+                <label text="Requests" type="h4"/>
+                <container style="row">
+                   <!-- <container style="col q-my-auto"><link url="../Request" parameter-map="[statusId:'ReqSubmitted']"
+                            text="Submitted" badge="${requestSubmittedCount}" btn-type="default"/></container>
+                    <container style="col q-my-auto"><link url="../Request" parameter-map="[statusId:'ReqReviewed,ReqInProgress', statusId_op:'in']"
+                            text="In Progress" badge="${requestInProgressCount}" btn-type="default"/></container>-->
+                <render-mode><text type="qvt"><![CDATA[
+                    <q-btn class="col" no-caps outline text-color="primary" label="Placed">
+                        <q-badge color="primary" floating>${requestSubmittedCount}</q-badge>
+                    </q-btn>
+                    <q-btn  class="col" no-caps outline text-color="primary" label="Approved">
+                        <q-badge color="primary" floating>${requestInProgressCount}</q-badge>
+                    </q-btn>
+                ]]></text></render-mode>
+                </container>
+            </row-col><row-col sm="0" md="1"><label text="&amp;nbsp;" encode="false"/></row-col></container-row>
+        </widgets></section>
+
+        <container-row><row-col sm="1"><label text="&amp;nbsp;" encode="false"/></row-col><row-col sm="4" style="text-center">
+            <label text="Operate" type="h4"/>
+            <container-row><row-col sm="6">
+                <render-mode>
+                    <text type="qvt"><![CDATA[
+                            <q-btn to="/qapps/PopcAdmin/Supplier" no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                                <q-img src="/ssstatic/images/Supplier.png" spinner-color="white" style="width:40px"/>
+                                <div class="text-primary text-subtitle1">Suppliers</div>
+                            </q-btn>
+
+                            <q-btn to="/qapps/PopcAdmin/Order?orderType=Purchase"  no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                                <q-img src="/ssstatic/images/Purchasing.png" spinner-color="white" style="width:40px"/>
+                                <div class="text-primary text-subtitle1">Purchase Orders</div>
+                            </q-btn>
+                            <q-btn to="/qapps/PopcAdmin/Shipment?parentShipmentType=ShpTpIncoming"  no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                                <q-img src="/ssstatic/images/Receiving.png" spinner-color="white" style="width:40px"/>
+                                <div class="text-primary text-subtitle1">Incoming Shipments</div>
+                            </q-btn>
+                        ]]>
+                    </text>
+                </render-mode>
+            </row-col><row-col sm="6">
+                <render-mode><text type="qvt"><![CDATA[
+                <q-btn to="/qapps/PopcAdmin/Customer" no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                    <q-img src="/ssstatic/images/Customer.png" spinner-color="white" style="width:40px"/>
+                    <div class="text-primary text-subtitle1">Customers</div>
+                </q-btn>
+                <q-btn to="/qapps/PopcAdmin/Request"  no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                    <q-img src="/ssstatic/images/Request.png" spinner-color="white" style="width:40px"/>
+                    <div class="text-primary text-subtitle1">Requests</div>
+                </q-btn>
+                <q-btn to="/qapps/PopcAdmin/Order?orderType=Sales"  no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                    <q-img src="/ssstatic/images/Sales.png" spinner-color="white" style="width:40px"/>
+                    <div class="text-primary text-subtitle1">Sales Orders</div>
+                </q-btn>
+                ]]>
+                    </text>
+        </render-mode>
+
+            </row-col></container-row>
+            <label text="&amp;nbsp;" type="p" encode="false"/>
+            <container-row><row-col sm="6">
+                <render-mode><text type="qvt"><![CDATA[
+                    <q-btn to="/qapps/PopcAdmin/Asset/Asset/FindSummary" no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                        <q-img src="/ssstatic/images/Inventory.png" spinner-color="white" style="width:40px"/>
+                        <div class="text-primary text-subtitle1">Inventory Assets</div>
+                    </q-btn>
+                    <q-btn to="/qapps/PopcAdmin/Return"  no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                        <q-img src="/ssstatic/images/Return.png" spinner-color="white" style="width:40px"/>
+                        <div class="text-primary text-subtitle1">Returns</div>
+                    </q-btn>
+                    ]]>
+                    </text>
+                </render-mode>
+
+
+            </row-col><row-col sm="6">
+                <render-mode><text type="qvt"><![CDATA[
+                    <q-btn to="/qapps/PopcAdmin/Shipping" no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                        <q-img src="/ssstatic/images/Picking.png" spinner-color="white" style="width:40px"/>
+                        <div class="text-primary text-subtitle1">Shipping</div>
+                    </q-btn>
+                    <q-btn to="/qapps/PopcAdmin/Shipment"  no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                        <q-img src="/ssstatic/images/Shipping.png" spinner-color="white" style="width:40px"/>
+                        <div class="text-primary text-subtitle1">Outgoing Shipments</div>
+                    </q-btn>
+                    ]]>
+                    </text>
+                </render-mode>
+
+            </row-col></container-row>
+        </row-col><row-col sm="2"><label text="&amp;nbsp;" encode="false"/></row-col><row-col sm="4" style="text-center">
+            <label text="Manage" type="h4"/>
+            <container-row><row-col sm="6">
+                <container>
+                    <render-mode><text type="qvt"><![CDATA[
+                        <q-btn to="/qapps/PopcAdmin/Catalog"  no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                            <q-img src="/ssstatic/images/Catalog.png" spinner-color="white" style="width:40px"/>
+                            <div class="text-primary text-subtitle1">Catalog</div>
+                        </q-btn>
+                        <q-btn to="/qapps/PopcAdmin/Catalog/Product" no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                            <q-img src="/ssstatic/images/Product.png" spinner-color="white" style="width:40px"/>
+                            <div class="text-primary text-subtitle1">Products</div>
+                        </q-btn>
+                        <q-btn to="/qapps/PopcAdmin/ProductStore" no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                            <q-img src="/ssstatic/images/Store.png" spinner-color="white" style="width:40px"/>
+                            <div class="text-primary text-subtitle1">Stores</div>
+                        </q-btn>
+                        ]]>
+                    </text></render-mode>
+
+                </container>
+            </row-col><row-col sm="6">
+                <container>
+                    <render-mode><text type="qvt"><![CDATA[
+                        <q-btn to="/qapps/PopcAdmin/Wiki/WikiSpaces" no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                            <q-img src="/ssstatic/images/Wiki.png" spinner-color="white" style="width:40px"/>
+                            <div class="text-primary text-subtitle1">Wiki/Content</div>
+                        </q-btn>
+                        <q-btn to="/qapps/PopcAdmin/Wiki/WikiBlogs" no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                            <q-img src="/ssstatic/images/Blog.png" spinner-color="white" style="width:40px"/>
+                            <div class="text-primary text-subtitle1">Wiki Blogs</div>
+                        </q-btn>
+                        <q-btn to="/qapps/PopcAdmin/Survey" no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                            <q-img src="/ssstatic/images/Survey.png" spinner-color="white" style="width:40px"/>
+                            <div class="text-primary text-subtitle1">Stores</div>
+                        </q-btn>
+                        ]]>
+                    </text></render-mode>
+                </container>
+            </row-col></container-row>
+            <label text="&amp;nbsp;" type="p" encode="false"/>
+            <container-row><row-col sm="6">
+
+
+                <render-mode><text type="qvt"><![CDATA[
+                    <q-btn to="/qapps/PopcAdmin/Manufacturing" no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                        <q-img src="/ssstatic/images/Manufacturing.png" spinner-color="white" style="width:40px"/>
+                        <div class="text-primary text-subtitle1">Manufacturing</div>
+                    </q-btn>
+                    <q-btn to="/qapps/PopcAdmin/Asset" no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                        <q-img src="/ssstatic/images/Asset.png" spinner-color="white" style="width:40px"/>
+                        <div class="text-primary text-subtitle1">Asset</div>
+                    </q-btn>
+                    <q-btn to="/qapps/PopcAdmin/Facility" no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                        <q-img src="/ssstatic/images/Facility.png" spinner-color="white" style="width:40px"/>
+                        <div class="text-primary text-subtitle1">Facility</div>
+                    </q-btn>
+                ]]></text></render-mode>
+            </row-col><row-col sm="6">
+                <render-mode><text type="qvt"><![CDATA[
+                    <q-btn to="/qapps/PopcAdmin/Party" no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                        <q-img src="/ssstatic/images/Parties.png" spinner-color="white" style="width:40px"/>
+                        <div class="text-primary text-subtitle1">Parties</div>
+                    </q-btn>
+                    <q-btn to="/qapps/PopcAdmin/Accounting" no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                        <q-img src="/ssstatic/images/Accounting.png" spinner-color="white" style="width:40px"/>
+                        <div class="text-primary text-subtitle1">Accounting</div>
+                    </q-btn>
+                    <q-btn to="/qapps/PopcAdmin/Accounting/Reports" no-caps stack outline class="q-px-md q-py-xs" size="lg" color="grey-5" style="width:100%">
+                        <q-img src="/ssstatic/images/Report.png" spinner-color="white" style="width:40px"/>
+                        <div class="text-primary text-subtitle1">Reports</div>
+                    </q-btn>
+                    ]]></text></render-mode>
+            </row-col></container-row>
+            <label text="&amp;nbsp;" type="p" encode="false"/>
+            <container style="text-center">
+                <link url="../QuickViewReport" text="Custom Reports" link-type="anchor"/>
+                <label text=" - "/>
+                <link url="../SimpleReport" text="Report Builder" link-type="anchor"/>
+            </container>
+        </row-col><row-col sm="1"><label text="&amp;nbsp;" encode="false"/></row-col></container-row>
+    </widgets>
+</screen>
