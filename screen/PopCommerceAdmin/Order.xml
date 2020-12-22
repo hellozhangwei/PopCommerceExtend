@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This software is in the public domain under CC0 1.0 Universal plus a 
+Grant of Patent License.
+
+To the extent possible under law, the author(s) have dedicated all
+copyright and related and neighboring rights to this software to the
+public domain worldwide. This software is distributed without any
+warranty.
+
+You should have received a copy of the CC0 Public Domain Dedication
+along with this software (see the LICENSE.md file). If not, see
+<http://creativecommons.org/publicdomain/zero/1.0/>.
+-->
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.1.xsd"
+        default-menu-title="Orders" default-menu-index="13" menu-image="/ssstatic/images/Sales.png">
+
+    <subscreens default-item="FindOrder">
+        <subscreens-item name="OrderIssuedInvoiced" menu-index="3"
+                         location="component://SimpleScreens/screen/SimpleScreens/Accounting/Reports/OrderIssuedInvoiced.xml"/>
+        <subscreens-item name="SalesAnalysis" menu-index="4"
+                         location="component://SimpleScreens/screen/SimpleScreens/Accounting/Reports/SalesAnalysis.xml"/>
+        <subscreens-item name="SalesSummary" menu-index="5"
+                         location="component://SimpleScreens/screen/SimpleScreens/Accounting/Reports/SalesSummary.xml"/>
+    </subscreens>
+
+    <widgets>
+        <!--<link url="FindOrder" text="Back to Orders" icon="chevron_left"/>-->
+        <render-mode><text type="qvt"><![CDATA[
+            <q-btn dense flat no-caps icon="chevron_left" label="Back to Orders" text-color="grey" to="/qapps/PopcAdmin/Order/FindOrder"/>
+        ]]></text></render-mode>
+        <subscreens-panel id="OrderPanel" type="tab"/>
+    </widgets>
+</screen>
