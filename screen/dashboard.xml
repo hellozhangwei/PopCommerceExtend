@@ -19,7 +19,69 @@ along with this software (see the LICENSE.md file). If not, see
     <transition name="quickLookup"><default-response url="../QuickLookup"/></transition>
 
     <widgets>
+        <render-mode><text type="qvt"><![CDATA[
 
+            <div class="row shadow-2 rounded-borders">
+                <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 ">
+                    <q-card class="no-shadow q-pa-sm">
+                        <q-item class="q-pb-none q-pt-xs">
+                            <q-item-section>
+                                <q-item-label class="text-h4" style="font-weight: 500;letter-spacing: 3px;color: #0dceec;">900</q-item-label>
+                                <q-item-label :class="!$q.dark.isActive? 'text-grey-7':'text-white'" style="letter-spacing: 1px;">Orders Placed</q-item-label>
+                            </q-item-section>
+                            <q-item-section side>
+                                <q-icon name="o_shopping_cart" style="color: #0dceec;" size="60px"></q-icon>
+                            </q-item-section>
+                        </q-item>
+                    </q-card>
+                </div>
+                <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 " style="border-left: 1px solid #efefef;"
+                     v-bind:class="{'border-top': $q.platform.is.mobile}">
+                    <q-card class="no-shadow q-pa-sm">
+                        <q-item class="q-pb-none q-pt-xs">
+                            <q-item-section>
+                                <q-item-label class="text-h4" style="font-weight: 500;letter-spacing: 3px;color: #fe434f;">1050</q-item-label>
+                                <q-item-label :class="!$q.dark.isActive? 'text-grey-7':'text-white'" style="letter-spacing: 1px;">Orders Approved</q-item-label>
+                            </q-item-section>
+
+                            <q-item-section side>
+                                <q-icon name="o_account_balance_wallet" style="color: #fe434f;" size="60px"></q-icon>
+                            </q-item-section>
+                        </q-item>
+                    </q-card>
+                </div>
+                <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 " style="border-left: 1px solid #efefef;"
+                     v-bind:class="{'border-top': $q.platform.is.mobile}">
+                    <q-card class="no-shadow q-pa-sm">
+                        <q-item class="q-pb-none q-pt-xs">
+                            <q-item-section>
+                                <q-item-label class="text-h4" style="font-weight: 500;letter-spacing: 3px;color: #15ca20;">80 %</q-item-label>
+                                <q-item-label :class="!$q.dark.isActive? 'text-grey-7':'text-white'" style="letter-spacing: 1px;">Orders Hold</q-item-label>
+                            </q-item-section>
+
+                            <q-item-section side>
+                                <q-icon name="account_balance" style="color: #15ca20;" size="60px"></q-icon>
+                            </q-item-section>
+                        </q-item>
+                    </q-card>
+                </div>
+                <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 " style="border-left: 1px solid #efefef;"
+                     v-bind:class="{'border-top': $q.platform.is.mobile}">
+                    <q-card class="no-shadow q-pa-sm">
+                        <q-item class="q-pb-none q-pt-xs">
+                            <q-item-section>
+                                <q-item-label class="text-h4" style="font-weight: 500;letter-spacing: 3px;color: #ff9700;">720</q-item-label>
+                                <q-item-label :class="!$q.dark.isActive? 'text-grey-7':'text-white'" style="letter-spacing: 1px;">Request Placed</q-item-label>
+                            </q-item-section>
+
+                            <q-item-section side>
+                                <q-icon name="people" style="color: #ff9700;" size="60px"></q-icon>
+                            </q-item-section>
+                        </q-item>
+                    </q-card>
+                </div>
+            </div>
+            ]]></text></render-mode>
         <container-row><row-col md="6" style="text-center">
             <form-single name="SearchOptions" transition="search" extends="component://SimpleScreens/screen/SimpleScreens/Search.xml#SearchOptions">
                 <field name="queryString"><default-field tooltip=""><text-line size="25"/></default-field></field>
@@ -77,7 +139,7 @@ along with this software (see the LICENSE.md file). If not, see
                         <q-btn  class="col" no-caps outline text-color="primary" label="Approved">
                             <q-badge color="primary" floating>${orderApprovedCount}</q-badge>
                         </q-btn>
-                        <q-btn  class="col" no-caps outline text-color="primary" label="Approved">
+                        <q-btn  class="col" no-caps outline text-color="primary" label="Hold">
                             <q-badge color="primary" floating>${orderHeldCount}</q-badge>
                         </q-btn>
                     ]]></text></render-mode>
