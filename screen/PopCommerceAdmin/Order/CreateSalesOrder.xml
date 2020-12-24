@@ -13,7 +13,41 @@ along with this software (see the LICENSE.md file). If not, see
 <http://creativecommons.org/publicdomain/zero/1.0/>.
 -->
 <screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.1.xsd"
-        default-menu-title="Create Sales Order" default-menu-index="1" >
+        default-menu-title="Create Sales Order" default-menu-index="1" menu-image="add" menu-image-type="icon">
+
+    <transition name="createOrder"><service-call name="mantle.order.OrderServices.create#Order"/>
+        <default-response url="../OrderDetail"/></transition>
+    <transition name="getWhFacilitiesByOwner">
+        <service-call name="mantle.facility.FacilityServices.get#FacilitiesByOwner"
+                      in-map="[ownerPartyId:(customerPartyId ?: vendorPartyId), productStoreId:productStoreId, facilityTypeEnumId:'FcTpWarehouse']"
+                      web-send-json-response="resultList"/>
+        <default-response type="none"/>
+    </transition>
+    <transition name="getStoreOrgOrAllOrgInternal"><parameter name="productStoreId"/><actions>
+        <if condition="productStoreId">
+            <entity-find-one entity-name="mantle.product.store.ProductStore" value-field="productStore">
+                <field-map field-name="productStoreId"/></entity-find-one>
+            <if condition="productStore != null">
+                <entity-find-one entity-name="mantle.party.PartyDetail" value-field="orgParty">
+                    <field-map field-name="partyId" from="productStore.organizationPartyId"/></entity-find-one>
+                <if condition="orgParty != null">
+                    <script>ec.web.sendJsonResponse([[value:orgParty.partyId, label:ec.resource.expand("PartyNameTemplate", "", orgParty)]])</script>
+                    <return/>
+                </if>
+            </if>
+        </if>
+        <entity-find entity-name="mantle.party.PartyDetailAndRole" list="partyList">
+            <econdition field-name="roleTypeId" value="OrgInternal"/>
+            <econdition field-name="disabled" value="N" or-null="true"/>
+            <order-by field-name="organizationName"/>
+        </entity-find>
+        <script>
+            def outList = []
+            for (party in partyList) outList.add([value:party.partyId, label:ec.resource.expand("PartyNameTemplate", "", party)])
+            ec.web.sendJsonResponse(outList)
+        </script>
+    </actions><default-response type="none"/></transition>
+    <transition-include name="searchPartyList" location="component://SimpleScreens/template/party/PartyForms.xml"/>
 
     <widgets>
 

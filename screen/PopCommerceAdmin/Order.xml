@@ -25,10 +25,10 @@ along with this software (see the LICENSE.md file). If not, see
     </subscreens>
 
     <widgets>
-        <!--<link url="FindOrder" text="Back to Orders" icon="chevron_left"/>-->
-        <render-mode><text type="qvt"><![CDATA[
+        <!--<link url="FindOrder" text="Back to Orders" icon="fa fa-angle-double-left" link-type="anchor"/>-->
+        <!--<render-mode><text type="qvt"><![CDATA[
             <q-btn dense flat no-caps icon="chevron_left" label="Back to Orders" text-color="grey" to="/qapps/PopcAdmin/Order/FindOrder"/>
-        ]]></text></render-mode>
+        ]]></text></render-mode>-->
         <subscreens-panel id="OrderPanel" type="tab"/>
     </widgets>
 </screen>
