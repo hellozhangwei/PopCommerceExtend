@@ -45,6 +45,8 @@ along with this software (see the LICENSE.md file). If not, see
                         <q-input square outlined v-model="text" label="Square outlined"></q-input>
 
                         <q-input square standout v-model="text" label="Square standout"></q-input>
+
+                        <q-btn color="primary" label="Click me"></q-btn>
                     </div>
                 </div>
             </template>
