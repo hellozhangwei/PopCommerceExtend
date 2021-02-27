@@ -22,6 +22,19 @@ along with this software (see the LICENSE.md file). If not, see
             <template>
                 <div class="q-pa-md">
                     <div class="q-gutter-md" style="max-width: 300px">
+
+                        <q-field label="Standard" stack-label>
+                            <template v-slot:control>
+                                <div class="self-center full-width no-outline" tabindex="0">Field content</div>
+                            </template>
+                        </q-field>
+
+                        <q-field label="Destination Address(read only)" stack-label :dense="dense" readonly>
+                            <template v-slot:control>
+                              <div class="self-center full-width no-outline">北京盛安德科技发展有限公司廊坊分公司</div>
+                            </template>
+                        </q-field>
+
                         <q-input v-model="text1" label="Standard" ></q-input><!--don't use self-closed tag!!!-->
 
                         <q-input filled v-model="text2" label="Filled"></q-input>
@@ -61,6 +74,9 @@ along with this software (see the LICENSE.md file). If not, see
               }
             }
             </script>
+            <style type="text/css">
+            .q-field--outlined.q-field--readonly .q-field__control:before {border-style: none;}
+            </style>
     ]]></text></render-mode>
 
     </widgets>
